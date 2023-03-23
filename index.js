@@ -26,12 +26,20 @@ async function run() {
         await client.connect();
         const menuCollection = client.db('tikfoodDB').collection('menu');
 
-        // get all menu data (json format) from database
+        // 01. get all menu data (json format) from database
         app.get('/menu', async (req, res) => {
             const query = {};
             const cursor = menuCollection.find(query);
             const products = await cursor.toArray();
             res.send(products);
+        });
+
+        // 02. POST a new menu item from server-side to database
+        app.post('/menu', async(req, res) => {
+            const newMenu = req.body;
+            console.log('Adding a new menu item', newMenu);
+            const result = await menuCollection.insertOne(newMenu);
+            res.send(result);
         });
     }
     finally {

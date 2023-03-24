@@ -35,7 +35,7 @@ async function run() {
         });
 
         // 02. POST a new menu item from server-side to database
-        app.post('/menu', async(req, res) => {
+        app.post('/menu', async (req, res) => {
             const newMenu = req.body;
             console.log('Adding a new menu item', newMenu);
             const result = await menuCollection.insertOne(newMenu);
@@ -43,20 +43,38 @@ async function run() {
         });
 
         // 03. Load a particular menu item data from database - (id-wise)
-        app.get('/menu/:id', async(req, res) => {
+        app.get('/menu/:id', async (req, res) => {
             const id = req.params.id;
             // console.log(id);
-            const query = {_id: new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const menuItem = await menuCollection.findOne(query);
             res.send(menuItem);
         });
 
         // 04. DELETE a menu item from server-side to database
-        app.delete('/menu/:id', async(req, res) => {
+        app.delete('/menu/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const result = await menuCollection.deleteOne(query);
             console.log('One menu item is deleted');
+            res.send(result);
+        });
+
+        // Update a menu item in server-side and send to the database
+        app.put('/menu/:id', async (req, res) => {
+            const id = req.params.id;
+            const menuItemData = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    name: menuItemData.name,
+                    price: menuItemData.price,
+                    availability: menuItemData.availability
+                }
+            };
+            const result = await menuCollection.updateOne(filter, updatedDoc, options);
+            console.log('Product is updated');
             res.send(result);
         });
     }

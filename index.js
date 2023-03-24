@@ -50,6 +50,15 @@ async function run() {
             const menuItem = await menuCollection.findOne(query);
             res.send(menuItem);
         });
+
+        // 04. DELETE a menu item from server-side to database
+        app.delete('/menu/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await menuCollection.deleteOne(query);
+            console.log('One menu item is deleted');
+            res.send(result);
+        });
     }
     finally {
         // await client.close(); // commented, if I want to keep connection active;

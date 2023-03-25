@@ -23,7 +23,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 // Create dynamic data and send to the database
 async function run() {
     try {
-        await client.connect();
+        // await client.connect();
+        client.connect();
         const menuCollection = client.db('tikfoodDB').collection('menu');
         const userCollection = client.db('tikfoodDB').collection('users');
 

@@ -91,6 +91,21 @@ async function run() {
             const result = await userCollection.updateOne(filter, updateDoc, options);
             res.send(result);
         });
+
+        // 07. get all user's data (json format) from database
+        app.get('/user', async (req, res) => {
+            const query = {};
+            const cursor = userCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        });
+
+        // 08. get particular user to check user role (admin or not)
+        app.get('/user/admin', async (req, res) => {
+            console.log(req.query);
+            const adminUser = await userCollection.findOne({ email: req.query.email });
+            res.send(adminUser);
+        });
     }
     finally {
         // await client.close(); // commented, if I want to keep connection active;

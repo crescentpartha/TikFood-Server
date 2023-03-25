@@ -25,6 +25,7 @@ async function run() {
     try {
         await client.connect();
         const menuCollection = client.db('tikfoodDB').collection('menu');
+        const userCollection = client.db('tikfoodDB').collection('users');
 
         // 01. get all menu data (json format) from database
         app.get('/menu', async (req, res) => {
@@ -60,7 +61,7 @@ async function run() {
             res.send(result);
         });
 
-        // Update a menu item in server-side and send to the database
+        // 05. Update a menu item in server-side and send to the database
         app.put('/menu/:id', async (req, res) => {
             const id = req.params.id;
             const menuItemData = req.body;
@@ -75,6 +76,19 @@ async function run() {
             };
             const result = await menuCollection.updateOne(filter, updatedDoc, options);
             console.log('Product is updated');
+            res.send(result);
+        });
+
+        // 06. User Creation Process | put user to userCollection
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
             res.send(result);
         });
     }
